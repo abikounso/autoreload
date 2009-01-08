@@ -1,26 +1,31 @@
 = autoreload
 
-* FIX (url)
+* http://www.upp.or.jp
 
 == DESCRIPTION:
 
-FIX (describe your package)
-
-== FEATURES/PROBLEMS:
-
-* FIX (list of features or problems)
+  監視対象ディレクトリのファイルが更新（保存）された場合に、Firefoxが自動リロードを行う。
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+Firefoxでの準備
+* autoreloadに同梱されているmozlab.xpiをFirefoxにインストールし、【ツール】=>【MozRepl】=>【Start】で、telnetの待ち受けを開始。
+
+使用方法
+* ターミナルを起動し、
+  autoreload <ディレクトリ名>
+  ※ディレクトリ名を省略した場合は、app, publicが監視対象となる。
+  ※スクリプト起動時に、Firefox側でtelnetの待ち受けが開始されていないと、エラーが発生してしまうので注意。
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* Firefox 3.0.3
+* Ruby 1.8.6
+※その他の環境では、動作未確認。
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install abikounso-autoreload
 
 == LICENSE:
 
