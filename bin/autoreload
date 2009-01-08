@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+require "find"
+require "net/telnet"
+
+class AutoReloader
+  def add_file(dir)
+    files = []
+    Find::find(dir){|path| files << path unless FileTest::directory?(path)}
+    files
+  end
+ 
+  def reload_firefox(name)
+    puts "reload #{name}"
+    @telnet.puts "content.location.reload(true)"
+  end
+
+  def initialize
+    @last_time = Time.now
+  end
+  
+  def get_files
+    @telnet = Net::Telnet.new "Host" => "localhost", "Port" => 4242
+    @monitored_files = []
+    @monitored_dir = ARGV.empty? ? %w[app public] : ARGV
+    @monitored_dir.map!{|dir| dir + "/"}.each{|dir| @monitored_files << add_file(dir)}
+    @monitored_files.flatten!
+  end
+  
+  def check_files
+    @monitored_files.each do |name|
+      file_time = File::mtime(name)
+      if (@last_time + 2) < file_time
+        reload_firefox(name)
+        @last_time = file_time
+      end
+    end
+  end
+end
+
+a = AutoReloader.new
+f = 0
+loop do
+  a.get_files if f == 0
+  f = (f + 1) % 10
+  a.check_files
+  sleep(1)
+end
