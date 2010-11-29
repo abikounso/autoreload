@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require "find"
 require "net/telnet"
 
@@ -21,8 +22,8 @@ class AutoReloader
   def get_files
     @telnet = Net::Telnet.new "Host" => "localhost", "Port" => 4242
     @monitored_files = []
-    @monitored_dir = ARGV.empty? ? %w[app public] : ARGV
-    @monitored_dir.map!{|dir| dir + "/"}.each{|dir| @monitored_files << add_file(dir)}
+    monitored_dir = ARGV.empty? ? %w[app public] : ARGV
+    monitored_dir.map!{|dir| dir + "/"}.each{|dir| @monitored_files << add_file(dir)}
     @monitored_files.flatten!
   end
   
@@ -37,11 +38,15 @@ class AutoReloader
   end
 end
 
-a = AutoReloader.new
-f = 0
-loop do
-  a.get_files if f == 0
-  f = (f + 1) % 10
-  a.check_files
-  sleep(1)
+begin
+  a = AutoReloader.new
+  f = 0
+  loop do
+    a.get_files if f == 0
+    f = (f + 1) % 10
+    a.check_files
+    sleep(1)
+  end
+rescue Errno::ECONNREFUSED
+  puts "Firefoxのtelnet待ち受けを有効にしてください。"
 end
